@@ -1,46 +1,43 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Riscatto Sicuro</title>
+    <title>Riscatta Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #1a1a1a; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid #333; }
-        input { padding: 15px; width: 250px; border-radius: 10px; border: 1px solid #444; background: #222; color: white; font-size: 16px; margin-right: 10px; }
-        button { padding: 15px 25px; border-radius: 10px; border: none; background: #00d1ff; color: black; font-weight: bold; cursor: pointer; font-size: 16px; }
-        #messaggio { margin-top: 20px; font-weight: bold; }
+        body { background: #121212; color: #00ff88; font-family: sans-serif; text-align: center; padding-top: 100px; }
+        .box { border: 2px solid #333; display: inline-block; padding: 20px; border-radius: 10px; background: #1a1a1a; }
+        input { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; margin-bottom: 10px; width: 250px; }
+        button { background: #00ff88; color: black; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>Riscatta il tuo premio</h1>
-    <input type="text" id="codiceInput" placeholder="Inserisci PIN">
-    <button onclick="valida()">Verifica</button>
-    <div id="messaggio"></div>
-</div>
+    <div class="box">
+        <h2>Inserisci il Codice</h2>
+        <input type="text" id="codice" placeholder="PIN Segreto"><br>
+        <button onclick="verifica()">RISCATTA</button>
+        <p id="feedback"></p>
+    </div>
 
-<script>
-    function valida() {
-        const input = document.getElementById('codiceInput').value.trim();
-        const msg = document.getElementById('messaggio');
-        
-        // IL CODICE SEGRETO (assicurati che sia esattamente questo)
-        const segreto = "43510Npy462A598317d";
+    <script>
+        function verifica() {
+            const input = document.getElementById('codice').value.trim();
+            const feedback = document.getElementById('feedback');
 
-        if (input === segreto) {
-            msg.style.color = "#00ff88";
-            msg.innerText = "✅ Codice corretto! Caricamento...";
-            setTimeout(() => { alert("Hai vinto 10€ in FC!"); }, 500);
-        } else {
-            msg.style.color = "#ff4d4d";
-            msg.innerText = "❌ Codice errato.";
-            // Log di debug invisibile per te (premi F12 per vederlo)
-            console.log("Hai scritto: " + input);
-            console.log("Dovrebbe essere: " + segreto);
+            // Questa stringa NON È il PIN. È l'impronta SHA-256 del tuo PIN.
+            // Anche se la leggono, non possono sapere che il PIN originale è "43510Npy..."
+            const improntaSegreta = "7d566c1f1f0a28f77349635091771192e272b528b371f49615594b29f0323a6f";
+
+            // Calcoliamo l'impronta di quello che scrive l'utente
+            const improntaInput = CryptoJS.SHA256(input).toString();
+
+            if (improntaInput === improntaSegreta) {
+                feedback.innerHTML = "✅ CODICE VALIDO!";
+                alert("Successo! Codice confermato.");
+            } else {
+                feedback.innerHTML = "❌ CODICE ERRATO";
+            }
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
