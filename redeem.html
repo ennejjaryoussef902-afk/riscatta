@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Riscatto Sicuro</title>
+    <style>
+        /* (Usa lo stesso CSS di prima per il design) */
+        body { font-family: sans-serif; background: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: #1e1e1e; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+        input { padding: 10px; width: 250px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; }
+        button { padding: 10px 20px; background: #00d4ff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #status { margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Riscatta il tuo premio</h2>
+        <input type="text" id="coupon" placeholder="Inserisci codice...">
+        <button onclick="validaCodice()">Verifica</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Questo è l'hash SHA-256 del tuo codice "5329HL7614a646hN593"
+        // Anche se lo vedono, non possono risalire al codice originale facilmente.
+        const hashTarget = "1e86055d7790b4715f333333458394e77f0a8c2f82c474d20914c62f3609804e"; 
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function validaCodice() {
+            const input = document.getElementById('coupon').value;
+            const inputHash = await sha256(input);
+            const status = document.getElementById('status');
+
+            if (inputHash === hashTarget) {
+                status.innerHTML = "Codice Corretto! Accesso sbloccato.";
+                status.style.color = "lightgreen";
+            } else {
+                status.innerHTML = "Codice errato.";
+                status.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
