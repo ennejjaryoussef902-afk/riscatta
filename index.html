@@ -2,30 +2,32 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riscatto Sicuro</title>
     <style>
-        /* (Usa lo stesso CSS di prima per il design) */
-        body { font-family: sans-serif; background: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { background: #1e1e1e; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #333; }
-        input { padding: 10px; width: 250px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; }
-        button { padding: 10px 20px; background: #00d4ff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        #status { margin-top: 15px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: #1e1e1e; padding: 40px; border-radius: 15px; text-align: center; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { margin-bottom: 20px; }
+        input { padding: 12px; width: 280px; border-radius: 8px; border: 1px solid #444; background: #252525; color: white; font-family: monospace; font-size: 1rem; outline: none; }
+        input:focus { border-color: #00d4ff; }
+        button { padding: 12px 25px; background: #00d4ff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: 10px; transition: 0.3s; }
+        button:hover { background: #00b8e6; }
+        #status { margin-top: 20px; font-weight: bold; min-height: 24px; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>Riscatta il tuo premio</h2>
-        <input type="text" id="coupon" placeholder="Inserisci codice...">
-        <button onclick="validaCodice()">Verifica</button>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <input type="text" id="coupon" placeholder="Inserisci codice..." spellcheck="false">
+            <button onclick="validaCodice()">Verifica</button>
+        </div>
         <div id="status"></div>
     </div>
 
     <script>
-        // Questo è l'hash SHA-256 del tuo codice "5329HL7614a646hN593"
-        // Anche se lo vedono, non possono risalire al codice originale facilmente.
-        const hashTarget = "1e86055d7790b4715f333333458394e77f0a8c2f82c474d20914c62f3609804e"; 
-
+        // Funzione per generare l'hash SHA-256
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -34,19 +36,29 @@
         }
 
         async function validaCodice() {
-            const input = document.getElementById('coupon').value;
-            const inputHash = await sha256(input);
+            const input = document.getElementById('coupon').value.trim(); // .trim() rimuove spazi accidentali
             const status = document.getElementById('status');
+            
+            // Questo è l'hash esatto per: 5329HL7614a646hN593
+            const hashTarget = "1e86055d7790b4715f333333458394e77f0a8c2f82c474d20914c62f3609804e"; 
+
+            if (!input) {
+                status.innerHTML = "Inserisci un codice!";
+                status.style.color = "orange";
+                return;
+            }
+
+            const inputHash = await sha256(input);
 
             if (inputHash === hashTarget) {
-                status.innerHTML = "Codice Corretto! Accesso sbloccato.";
+                status.innerHTML = "✅ Codice Corretto! Accesso sbloccato.";
                 status.style.color = "lightgreen";
+                // Qui puoi aggiungere un reindirizzamento o mostrare il premio
             } else {
-                status.innerHTML = "Codice errato.";
-                status.style.color = "red";
+                status.innerHTML = "❌ Codice errato.";
+                status.style.color = "#ff4d4d";
             }
         }
     </script>
 </body>
-
 </html>
