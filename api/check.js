@@ -35,7 +35,7 @@ export default async function handler(req, res) {
             } else if (pin === code10) {
                 return res.status(200).json({ success: true, amount: 10.00 });
             } else {
-                return res.status(401).json({ success: false, message: "Codice errato" });
+                return res.status(200).json({ success: false, message: "Codice errato" });
             }
         } catch (error) {
             return res.status(500).json({ success: false, message: "Errore interno del server" });
