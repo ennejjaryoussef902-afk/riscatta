@@ -1,26 +1,35 @@
+import { MongoClient } from 'mongodb';
+
 export default async function handler(req, res) {
+    // Gestione CORS per permettere al sito di comunicare con l'API
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const pinRicevuto = req.body?.pin?.toString().trim();
-    const pinAtteso = process.env.CODE_5_EURO?.toString().trim();
+    const { pin } = req.body;
 
-    console.log("--- TEST COMPARAZIONE ---");
-    console.log("Ricevuto dal sito: [" + pinRicevuto + "]");
-    console.log("Atteso da Vercel: [" + pinAtteso + "]");
-    
-    if (!pinAtteso) {
-        console.error("ERRORE: La variabile CODE_5_EURO non è configurata su Vercel!");
+    // 1. Controllo rapido tramite variabile d'ambiente (per velocità)
+    if (pin === process.env.PIN_10_EURO) {
+        return res.status(200).json({ success: true, amount: 10 });
     }
 
-    if (pinRicevuto === pinAtteso && pinAtteso !== undefined) {
-        console.log("RISULTATO: Corrispondenza trovata!");
-        return res.status(200).json({ success: true, amount: 5 });
-    } else {
-        console.log("RISULTATO: PIN Sbagliato o Variabile mancante.");
-        return res.status(401).json({ success: false });
+    // 2. Controllo tramite MongoDB (per database dinamico)
+    try {
+        const client = await MongoClient.connect(process.env.MONGODB_URI);
+        const db = client.db('tuo_database');
+        const collection = db.collection('codici');
+
+        const result = await collection.findOne({ codice: pin });
+        client.close();
+
+        if (result) {
+            return res.status(200).json({ success: true, amount: result.valore });
+        } else {
+            return res.status(401).json({ success: false, message: "PIN Errato" });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: "Errore connessione DB" });
     }
 }
