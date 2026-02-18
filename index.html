@@ -92,7 +92,7 @@
         display.innerText = "Verifica...";
 
         try {
-            const response = await fetch('https://riscatta.vercel.app/api/check', {
+            const response = await fetch('/api/check', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pin: pinValue })
