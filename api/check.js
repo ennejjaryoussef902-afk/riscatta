@@ -1,46 +1,38 @@
 import { MongoClient } from 'mongodb';
 
 export default async function handler(req, res) {
-    // Gestione CORS per evitare errori di blocco dal browser
+    // Gestione CORS obbligatoria per Vercel
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ message: 'Metodo non consentito' });
 
-    const { pin } = req.body;
-    const uri = process.env.MONGODB_URI;
-
-    if (!pin) return res.status(400).json({ message: 'Inserisci un PIN' });
-
-    let client;
     try {
-        client = new MongoClient(uri);
+        const { pin } = req.body;
+        const uri = process.env.MONGODB_URI;
+
+        if (!uri) {
+            console.error("ERRORE: La variabile MONGODB_URI non è configurata su Vercel!");
+            return res.status(500).json({ message: "Configurazione server mancante" });
+        }
+
+        const client = new MongoClient(uri);
         await client.connect();
         
-        // Puntiamo al tuo database "Fabbricachat"
         const db = client.db('Fabbricachat'); 
-        const collection = db.collection('codici'); // Assicurati che la collezione si chiami 'codici'
+        const collection = db.collection('codici');
 
-        // Cerchiamo il PIN inserito dall'utente
         const result = await collection.findOne({ pin: pin });
+        await client.close();
 
         if (result) {
-            return res.status(200).json({ 
-                success: true, 
-                amount: result.valore || 0 
-            });
+            return res.status(200).json({ success: true, amount: result.valore });
         } else {
-            return res.status(401).json({ 
-                success: false, 
-                message: 'PIN errato o già utilizzato' 
-            });
+            return res.status(401).json({ success: false, message: "PIN non trovato" });
         }
     } catch (error) {
-        console.error("Errore DB:", error);
-        return res.status(500).json({ message: 'Errore tecnico del server' });
-    } finally {
-        if (client) await client.close();
+        console.error("ERRORE DETTAGLIATO:", error);
+        return res.status(500).json({ message: "Errore interno del database", details: error.message });
     }
 }
