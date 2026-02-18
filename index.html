@@ -17,48 +17,51 @@
         }
         .container {
             background-color: #1E2C33;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            padding: 40px;
+            border-radius: 4px;
             text-align: center;
-            width: 320px;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         h2 {
-            margin-top: 0;
+            margin-bottom: 25px;
             color: #FFD700;
             font-size: 1.2rem;
-            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         input {
             width: 100%;
             padding: 12px;
-            margin: 20px 0;
-            border: none;
-            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #2A3942;
+            border-radius: 0;
             background-color: #2A3942;
             color: white;
             font-size: 1rem;
             box-sizing: border-box;
             text-align: center;
         }
+        input:focus {
+            outline: 1px solid #00A884;
+        }
         button {
             width: 100%;
             padding: 12px;
             border: none;
-            border-radius: 4px;
             background-color: #00A884;
             color: white;
             font-weight: bold;
             cursor: pointer;
             font-size: 1rem;
+            text-transform: uppercase;
         }
         button:hover {
             background-color: #008F6F;
         }
-        #messaggio {
-            margin-top: 20px;
+        #risultato {
+            margin-top: 25px;
             font-size: 0.9rem;
-            min-height: 1.2em;
+            min-height: 1.5em;
         }
         .successo { color: #25D366; }
         .errore { color: #F15C5C; }
@@ -67,46 +70,48 @@
 <body>
 
 <div class="container">
-    <h2>Riscatta Codice</h2>
-    <input type="text" id="codiceInput" placeholder="Inserisci codice">
-    <button onclick="inviaCodice()">RISCATTA</button>
-    <div id="messaggio"></div>
+    <h2>RISCATTA CODICE</h2>
+    <input type="text" id="codice" placeholder="Inserisci il pin">
+    <button onclick="valida()">Invia</button>
+    <div id="risultato"></div>
 </div>
 
 <script>
-    async function inviaCodice() {
-        const codice = document.getElementById('codiceInput').value.trim();
-        const messaggioDiv = document.getElementById('messaggio');
-        
-        if (!codice) {
-            messaggioDiv.className = 'errore';
-            messaggioDiv.innerText = "Inserire un codice";
+    async function valida() {
+        const pinInput = document.getElementById('codice');
+        const display = document.getElementById('risultato');
+        const pinValue = pinInput.value.trim();
+
+        if (!pinValue) {
+            display.className = 'errore';
+            display.innerText = "Inserire un codice";
             return;
         }
 
-        messaggioDiv.className = '';
-        messaggioDiv.innerText = "Verifica in corso...";
+        display.className = '';
+        display.innerText = "Verifica...";
 
         try {
-            // Punta direttamente alla tua API su Vercel
             const response = await fetch('https://riscatta.vercel.app/api/check', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: codice })
+                body: JSON.stringify({ pin: pinValue })
             });
 
             const data = await response.json();
 
-            if (data.success) {
-                messaggioDiv.className = 'successo';
-                messaggioDiv.innerText = "Codice valido: " + data.amount + " FC";
+            if (response.ok && data.success) {
+                display.className = 'successo';
+                display.innerText = "Codice valido: " + data.amount + " FC";
+                pinInput.value = ""; // Pulisce il campo dopo il successo
             } else {
-                messaggioDiv.className = 'errore';
-                messaggioDiv.innerText = "Codice non valido";
+                display.className = 'errore';
+                display.innerText = data.message || "Codice non valido";
             }
-        } catch (error) {
-            messaggioDiv.className = 'errore';
-            messaggioDiv.innerText = "Errore di connessione";
+        } catch (err) {
+            display.className = 'errore';
+            display.innerText = "Errore di rete o CORS";
+            console.error(err);
         }
     }
 </script>
