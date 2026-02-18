@@ -1,42 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-    <title>Test Riscatto</title>
+    <meta charset="UTF-8">
+    <title>Riscatto Sicuro</title>
     <style>
-        body { background: #000; color: #00ff88; font-family: monospace; text-align: center; padding-top: 50px; }
-        input { padding: 10px; font-size: 18px; width: 250px; border: 2px solid #00ff88; background: #111; color: #fff; }
-        button { padding: 10px 20px; font-size: 18px; background: #00ff88; cursor: pointer; border: none; font-weight: bold; }
-        #debug { color: #888; margin-top: 30px; font-size: 12px; }
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #1a1a1a; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid #333; }
+        input { padding: 15px; width: 250px; border-radius: 10px; border: 1px solid #444; background: #222; color: white; font-size: 16px; margin-right: 10px; }
+        button { padding: 15px 25px; border-radius: 10px; border: none; background: #00d1ff; color: black; font-weight: bold; cursor: pointer; font-size: 16px; }
+        #messaggio { margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>INSERISCI PIN</h1>
-    <input type="text" id="pinInput" placeholder="Scrivi qui...">
-    <button onclick="check()">OK</button>
-    <h2 id="risultato"></h2>
+<div class="card">
+    <h1>Riscatta il tuo premio</h1>
+    <input type="text" id="codiceInput" placeholder="Inserisci PIN">
+    <button onclick="valida()">Verifica</button>
+    <div id="messaggio"></div>
+</div>
 
-    <div id="debug"></div>
+<script>
+    function valida() {
+        const input = document.getElementById('codiceInput').value.trim();
+        const msg = document.getElementById('messaggio');
+        
+        // IL CODICE SEGRETO (assicurati che sia esattamente questo)
+        const segreto = "43510Npy462A598317d";
 
-    <script>
-        function check() {
-            const input = document.getElementById('pinInput').value.trim();
-            const segreto = "43510Npy462A598317d";
-            const res = document.getElementById('risultato');
-            const debug = document.getElementById('debug');
-
-            // Debug: mostra cosa hai scritto e quanto è lungo
-            debug.innerHTML = "Hai scritto: [" + input + "]<br>Lunghezza: " + input.length + " caratteri<br>Atteso: 19 caratteri";
-
-            if (input === segreto) {
-                res.innerHTML = "✅ FUNZIONA! CODICE CORRETTO";
-                res.style.color = "#00ff88";
-                alert("SUCCESSO!");
-            } else {
-                res.innerHTML = "❌ ANCORA ERRATO";
-                res.style.color = "red";
-            }
+        if (input === segreto) {
+            msg.style.color = "#00ff88";
+            msg.innerText = "✅ Codice corretto! Caricamento...";
+            setTimeout(() => { alert("Hai vinto 10€ in FC!"); }, 500);
+        } else {
+            msg.style.color = "#ff4d4d";
+            msg.innerText = "❌ Codice errato.";
+            // Log di debug invisibile per te (premi F12 per vederlo)
+            console.log("Hai scritto: " + input);
+            console.log("Dovrebbe essere: " + segreto);
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
