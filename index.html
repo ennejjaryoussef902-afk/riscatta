@@ -5,50 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riscatto Fabchat</title>
     <style>
-        /* Stile moderno e Dark */
         body {
             background-color: #0d1117;
             color: #ffffff;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
+            position: relative;
         }
+
+        /* Badge in alto a destra */
+        #badgeFabchat {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(33, 136, 255, 0.2);
+            border: 1px solid #58a6ff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0; /* Nascondi all'inizio */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(-20px);
+        }
+
+        #badgeFabchat.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .counter-text { font-weight: bold; color: #58a6ff; font-size: 18px; }
 
         .container {
             background: #161b22;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
             text-align: center;
             border: 1px solid #30363d;
             width: 100%;
             max-width: 400px;
-            transition: transform 0.3s ease;
         }
 
-        .container:hover {
-            transform: translateY(-5px);
-        }
-
-        h1 {
-            color: #58a6ff;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        p {
-            color: #8b949e;
-            margin-bottom: 25px;
-        }
-
-        .fabchat-icon {
-            font-size: 50px;
-            margin-bottom: 20px;
-        }
+        h1 { color: #58a6ff; margin-bottom: 5px; }
+        p { color: #8b949e; margin-bottom: 25px; font-size: 14px; }
 
         input {
             width: 100%;
@@ -58,15 +63,10 @@
             border: 2px solid #30363d;
             background: #0d1117;
             color: white;
-            font-size: 18px;
+            font-size: 16px;
             text-align: center;
             box-sizing: border-box;
             outline: none;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            border-color: #58a6ff;
         }
 
         button {
@@ -79,36 +79,37 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: filter 0.3s, transform 0.1s;
+            transition: 0.3s;
         }
 
-        button:hover {
-            filter: brightness(1.2);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
+        button:hover { filter: brightness(1.2); }
 
         #messaggio {
-            margin-top: 20px;
+            margin-top: 25px;
             font-weight: bold;
-            min-height: 24px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
         }
 
-        .success { color: #3fb950; }
-        .error { color: #f85149; }
+        .success { background: rgba(63, 185, 80, 0.1); color: #3fb950; border: 1px solid #3fb950; display: block !important; }
+        .error { background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid #f85149; display: block !important; }
     </style>
 </head>
 <body>
 
+<div id="badgeFabchat">
+    <span>💎</span>
+    <span class="counter-text">+<span id="numeroFabchat">0</span> Fabchat</span>
+</div>
+
 <div class="container">
-    <div class="fabchat-icon">💎</div>
-    <h1>Fabchat Riscatto</h1>
-    <p>Inserisci il tuo codice segreto qui sotto</p>
+    <span style="font-size: 50px;">💎</span>
+    <h1>Fabchat</h1>
+    <p>Inserisci il codice per il riscatto</p>
     
-    <input type="text" id="pinInput" placeholder="Esempio: 43510...">
-    <button onclick="valida()">RISCATTA FABCHAT</button>
+    <input type="text" id="pinInput" placeholder="Inserisci il codice">
+    <button onclick="valida()">Riscatta Ora</button>
     
     <div id="messaggio"></div>
 </div>
@@ -117,32 +118,40 @@
     function valida() {
         const input = document.getElementById('pinInput').value.trim();
         const msg = document.getElementById('messaggio');
+        const badge = document.getElementById('badgeFabchat');
+        const numDisplay = document.getElementById('numeroFabchat');
 
-        // IL TUO CODICE IN BELLA VISTA (Come richiesto)
-        const codiceGiusto = "43510Npy462A598317d";
+        // Definizione codici e relativi valori
+        const databaseCodici = {
+            "43510Npy462A598317d": 10,
+            "1963RJS4359dsl16Fcs": 25
+        };
 
-        if (input === codiceGiusto) {
+        if (databaseCodici[input]) {
+            const valore = databaseCodici[input];
+            
+            // Mostra il badge in alto a destra
+            numDisplay.innerText = valore;
+            badge.classList.add('show');
+
+            // Mostra messaggio successo
             msg.className = "success";
-            msg.innerText = "✅ Codice Valido! Fabchat aggiunti.";
+            msg.innerText = "✅ Codice da " + valore + " Fabchat accettato!";
             
-            // Effetto wow: un alert dopo un piccolo ritardo
-            setTimeout(() => {
-                alert("CONGRATULAZIONI!\nHai riscattato i tuoi Fabchat con successo.");
-                // Se vuoi mandare a una pagina di ringraziamento:
-                // window.location.href = "grazie.html";
-            }, 500);
-            
+            // Reset dopo 4 secondi per permettere nuovi riscatti
+            setTimeout(() => { badge.classList.remove('show'); }, 4000);
+
+        } else if (input === "") {
+            msg.className = "error";
+            msg.innerText = "⚠️ Inserisci un codice!";
         } else {
             msg.className = "error";
-            msg.innerText = "❌ Codice errato. Riprova.";
+            msg.innerText = "❌ Codice errato!";
         }
     }
 
-    // Premere Invio per confermare
     document.getElementById('pinInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            valida();
-        }
+        if (e.key === 'Enter') { valida(); }
     });
 </script>
 
