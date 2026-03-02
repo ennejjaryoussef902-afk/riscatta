@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>YOULINIRI</title>
+<title>YOULINIRI PRO v6.0</title>
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
 :root{
@@ -13,76 +13,11 @@
   --border:rgba(0,0,0,.08);--font:-apple-system,BlinkMacSystemFont,sans-serif;
   --sidebar-w:290px;
 }
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:var(--font);background:var(--bg);color:var(--text)}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bg2);border-radius:2px}
 
-/* --- LAYOUT STRUTTURALE --- */
-body { display: flex; height: 100vh; overflow: hidden; position: relative; }
-
-.sidebar { 
-    width: var(--sidebar-w); 
-    background: var(--white); 
-    border-right: 1px solid var(--border); 
-    display: flex; 
-    flex-direction: column; 
-    z-index: 10;
-    transition: transform 0.3s ease;
-    flex-shrink: 0;
-}
-
-.chat-container { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    z-index: 20;
-    transition: transform 0.3s ease;
-    background: var(--bg);
-    position: relative;
-}
-
-/* --- ADATTAMENTO MOBILE --- */
-@media (max-width: 768px) {
-    .sidebar { width: 100%; position: absolute; inset: 0; }
-    .chat-container { 
-        width: 100%; 
-        position: absolute; 
-        inset: 0; 
-        transform: translateX(100%); 
-    }
-    .chat-container.active { transform: translateX(0); }
-}
-
-/* --- COMPONENTI TESTATA CHAT --- */
-.chat-header {
-    padding: 10px 15px;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    height: 60px;
-    flex-shrink: 0;
-}
-
-.back-btn { 
-    display: none; 
-    background: none; 
-    border: none; 
-    color: var(--blue); 
-    font-size: 24px; 
-    margin-right: 12px; 
-    cursor: pointer; 
-    line-height: 1;
-}
-
-@media (max-width: 768px) {
-    .back-btn { display: block; }
-}
-
-#chat-title { font-weight: 700; font-size: 16px; }
-
-/* OVERLAY & MODALS */
+/* OVERLAY */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:900;display:flex;align-items:center;justify-content:center;animation:fi .2s}
 .overlay.hidden{display:none!important}
 @keyframes fi{from{opacity:0}to{opacity:1}}
@@ -129,7 +64,8 @@ body { display: flex; height: 100vh; overflow: hidden; position: relative; }
 #app{display:flex;height:100vh;width:100%;opacity:0;transition:opacity .3s}
 #app.vis{opacity:1}
 
-/* SIDEBAR INTERNAL */
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;transition:transform .25s;z-index:20}
 .shdr{padding:14px;background:linear-gradient(135deg,#007aff,#0055d4);color:#fff;flex-shrink:0}
 .merow{display:flex;align-items:center;gap:9px}
 .av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;position:relative;cursor:pointer}
@@ -338,9 +274,94 @@ hr.div{border:none;border-top:1px solid var(--border);margin:13px 0}
   #callover.pip{width:240px;height:170px;bottom:12px;right:12px}
   .callctrl .bico{width:44px;height:44px;font-size:18px}
 }
+
+/* ══ DEVICE PICKER ══ */
+#dev-ov{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0a1e 0%,#1a1a3e 50%,#0a1a2e 100%)}
+#dev-ov.hidden{display:none!important}
+.dev-logo{text-align:center;margin-bottom:36px;animation:su .5s ease}
+.dev-logo span{font-size:60px;display:block;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(0,122,255,.6))}
+.dev-logo h1{font-size:26px;font-weight:900;color:#fff;letter-spacing:1px}
+.dev-logo p{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.dev-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:0 20px}
+.dev-card{width:150px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:20px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;animation:su .4s ease}
+.dev-card:hover{background:rgba(0,122,255,.2);border-color:rgba(0,122,255,.6);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,122,255,.3)}
+.dev-card .dc-ico{font-size:42px;display:block;margin-bottom:10px}
+.dev-card .dc-name{font-size:15px;font-weight:700;color:#fff}
+.dev-card .dc-desc{font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;line-height:1.4}
+.dev-hint{margin-top:24px;font-size:11px;color:rgba(255,255,255,.25);text-align:center}
+
+/* ══ VARIABILI DEVICE ══ */
+body.mobile{
+  --sidebar-w:100vw;
+  --font-base:13px;
+  --bubble-max:88%;
+  --msg-pad:8px 10px;
+}
+body.desktop{
+  --sidebar-w:280px;
+  --font-base:14px;
+  --bubble-max:72%;
+  --msg-pad:9px 13px;
+}
+body.mobile #app{font-size:var(--font-base)}
+body.mobile .mcard{padding:18px 14px}
+body.mobile .mtitle{font-size:16px}
+body.mobile .inp{padding:10px 12px;font-size:14px}
+body.mobile .btn{padding:11px 14px;font-size:14px}
+body.mobile .wb{font-size:22px}
+body.mobile .wc{padding:10px}
+body.mobile .sbh{padding:10px}
+body.mobile .bico{width:36px;height:36px;font-size:15px}
+body.mobile .mw{max-width:var(--bubble-max)}
+body.mobile .bl{padding:var(--msg-pad);font-size:13px}
+body.mobile #mb{padding:8px}
+body.mobile .ch{padding:8px 10px;gap:8px}
+body.mobile .chn{font-size:14px}
+body.mobile .ci{padding:8px 6px}
+body.mobile .ca{width:38px;height:38px;font-size:14px}
+body.mobile .cn{font-size:13px}
+body.mobile .mcard{max-height:95vh}
+
+body.mobile .sb{position:fixed;inset:0;transform:translateX(-100%);width:100%;z-index:50;transition:transform .25s}
+body.mobile .sb.open{transform:none}
+body.mobile .cm{width:100%;position:relative}
+body.mobile .cm.sb-open{visibility:hidden}
+body.mobile #back-btn{display:flex!important}
+body.mobile #sbtoggle{display:flex!important}
+
+body.desktop .sb{position:relative;transform:none!important;width:var(--sidebar-w)}
+body.desktop #back-btn{display:none!important}
+body.desktop #sbtoggle{display:none!important}
+
+/* Nasconde filtri di chiamata su schermi piccoli */
+body.mobile #filterbar .flb:nth-child(n+4){display:none}
+
 </style>
 </head>
 <body>
+
+<!-- DEVICE PICKER -->
+<div id="dev-ov">
+  <div class="dev-logo">
+    <span>💬</span>
+    <h1>YOULINIRI PRO</h1>
+    <p>Seleziona il dispositivo</p>
+  </div>
+  <div class="dev-cards">
+    <div class="dev-card" onclick="chooseDevice('mobile')">
+      <span class="dc-ico">📱</span>
+      <div class="dc-name">Telefono</div>
+      <div class="dc-desc">Layout compatto<br/>ottimizzato per touch</div>
+    </div>
+    <div class="dev-card" onclick="chooseDevice('tablet')">
+      <span class="dc-ico">🖥️</span>
+      <div class="dc-name">Tablet / PC</div>
+      <div class="dc-desc">Layout completo<br/>con sidebar visibile</div>
+    </div>
+  </div>
+  <div class="dev-hint">La preferenza viene salvata. Puoi cambiarla dalle impostazioni.</div>
+</div>
+
 <div id="toast"></div>
 
 <!-- PRIVACY -->
@@ -622,6 +643,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:13px 0}
     <button class="btn bp" onclick="changePwd()">AGGIORNA PASSWORD</button>
     <hr class="div"/>
     <button class="btn" style="background:var(--bg);color:var(--text);width:100%;margin-bottom:8px" onclick="exportData()">📤 Esporta Dati</button>
+    <button class="btn" style="background:var(--bg2);color:var(--text);margin-bottom:8px" onclick="resetDevice()">📱↔️🖥️ Cambia Dispositivo</button>
     <button class="btn bd" onclick="resetApp()">🗑 RESET TOTALE</button>
     <button class="btn bg" onclick="hideM('sett-ov')">Chiudi</button>
     <div id="pwderr" style="color:var(--red);font-size:12px;text-align:center;margin-top:8px;min-height:14px"></div>
@@ -664,6 +686,8 @@ function fmtSz(b){return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/10
    PRIVACY
 ═══════════════════════ */
 function initPrivacy(){
+  // Non partire se il device picker è ancora visibile
+  if(!document.getElementById('dev-ov').classList.contains('hidden')) return;
   if(getCk('yl_priv')==='1'){hideM('priv-ov');initAuth();return}
   showM('priv-ov');
   const c1=$('chk1'),c2=$('chk2'),b=$('priv-btn');
@@ -765,7 +789,17 @@ let peerRetries=0;
 function initPeer(){
   if(peer){try{peer.destroy()}catch{}}
   const pid='yln_'+CU.username;
-  peer=new Peer(pid,{debug:0});
+  peer=new Peer(pid,{
+    debug:0,
+    config:{iceServers:[
+      {urls:'stun:stun.l.google.com:19302'},
+      {urls:'stun:stun2.l.google.com:19302'},
+      {urls:'turn:openrelay.metered.ca:80',   username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turn:openrelay.metered.ca:443',  username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turns:openrelay.metered.ca:443', username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
+    ]}
+  });
   setConnStatus('connecting');
 
   peer.on('open',id=>{
@@ -804,7 +838,12 @@ function initPeer(){
       myPeerID='yln_'+CU.username+'_'+Date.now().toString(36).slice(-4);
       peer.destroy();
       setTimeout(()=>{
-        peer=new Peer(myPeerID);
+        peer=new Peer(myPeerID,{debug:0,config:{iceServers:[
+          {urls:'stun:stun.l.google.com:19302'},
+          {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+          {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},
+          {urls:'turns:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'}
+        ]}});
         peer.on('open',id=>{$('mypeerid').textContent=id;setConnStatus('online')});
         peer.on('connection',conn=>{conn.on('open',()=>{conns[conn.peer]=conn});conn.on('data',d=>recvData(d,conn.peer))});
         peer.on('call',handleIncoming);
@@ -1146,37 +1185,65 @@ function closeSidebar(){$('sidebar').classList.remove('open')}
 /* ═══════════════════════
    AUDIO RECORDING
 ═══════════════════════ */
-let mrec=null,achunks=[],recTI,recS=0;
+let mrec=null,achunks=[],recTI=null,recStart=0,recMime='';
 
-function togRec(){if(mrec&&mrec.state==='recording')return;startRec()}
+function togRec(){
+  if(mrec&&mrec.state==='recording'){stopRec(false);return}
+  if(!mrec)startRec();
+}
 
 async function startRec(){
+  if(mrec)return; // prevent double call
   try{
-    const s=await navigator.mediaDevices.getUserMedia({audio:true});
-    mrec=new MediaRecorder(s);achunks=[];recS=0;
-    mrec.ondataavailable=e=>achunks.push(e.data);mrec.start();
+    const s=await navigator.mediaDevices.getUserMedia({
+      audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}
+    });
+    // Trova il MIME type supportato
+    recMime=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg','audio/mp4','']
+      .find(t=>!t||MediaRecorder.isTypeSupported(t))||'';
+    mrec=new MediaRecorder(s, recMime?{mimeType:recMime}:{});
+    achunks=[];
+    mrec.ondataavailable=e=>{if(e.data&&e.data.size>0)achunks.push(e.data)};
+    mrec.start(200); // chunk ogni 200ms
+    recStart=Date.now();
+    // UI
     $('recbar').classList.remove('hidden');
-    $('msginput').style.display='none';$('sendbtn')||null;
+    $('msginput').style.display='none';
     $('recbtn').style.background='var(--red)';
-    recTI=setInterval(()=>{recS++;$('rectime').textContent=`${Math.floor(recS/60)}:${String(recS%60).padStart(2,'0')}`},1000);
-  }catch{toast('Microfono non disponibile')}
+    $('rectime').textContent='0:00';
+    // Timer basato su tempo reale (non su counter che può saltare)
+    if(recTI)clearInterval(recTI);
+    recTI=setInterval(()=>{
+      const t=Math.floor((Date.now()-recStart)/1000);
+      $('rectime').textContent=Math.floor(t/60)+':'+(t%60<10?'0':'')+(t%60);
+    },250);
+  }catch(e){
+    mrec=null;
+    if(e.name==='NotAllowedError')toast('⚠ Permesso microfono negato. Controlla le impostazioni del browser.');
+    else if(e.name==='NotFoundError')toast('⚠ Nessun microfono trovato.');
+    else toast('⚠ Errore microfono: '+e.message);
+  }
 }
 
 function stopRec(cancel){
   if(!mrec)return;
-  clearInterval(recTI);
+  clearInterval(recTI);recTI=null;
+  const dur=$('rectime').textContent; // salva durata prima di resettare UI
   mrec.onstop=()=>{
-    if(!cancel&&achunks.length){
-      const blob=new Blob(achunks,{type:'audio/webm'});
+    if(!cancel&&achunks.length>0){
+      const mime=mrec?.mimeType||recMime||'audio/webm';
+      const blob=new Blob(achunks,{type:mime});
       const fr=new FileReader();
-      fr.onload=e=>{
-        const m={type:'audio',isVoice:true,data:e.target.result,dur:$('rectime').textContent,ts:Date.now(),side:'me'};
+      fr.onload=ev=>{
+        const m={type:'audio',isVoice:true,data:ev.target.result,dur,ts:Date.now(),side:'me'};
         saveAndShow(activeCont.id,m);sendPayload(m);
-      };fr.readAsDataURL(blob);
+      };
+      fr.readAsDataURL(blob);
     }
-    mrec.stream.getTracks().forEach(t=>t.stop());mrec=null;
+    try{mrec.stream.getTracks().forEach(t=>t.stop())}catch(e){}
+    mrec=null;achunks=[];
   };
-  mrec.stop();
+  try{mrec.stop()}catch(e){mrec=null}
   $('recbar').classList.add('hidden');
   $('msginput').style.display='';
   $('recbtn').style.background='';
@@ -1194,7 +1261,10 @@ async function startCall(type){
   try{
     let s;
     if(type==='screen')s=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
-    else s=await navigator.mediaDevices.getUserMedia({video:type==='video',audio:true});
+    else s=await navigator.mediaDevices.getUserMedia({
+      audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},
+      video:type==='video'?{facingMode:'user',width:{ideal:640},height:{ideal:480}}:false
+    });
     locStream=s;
     $('localv').srcObject=s;
     if(type!=='audio'){$('localv').style.display='block'}
@@ -1218,7 +1288,10 @@ function handleIncoming(call){
 async function accCall(){
   hideM('incall');
   try{
-    const s=await navigator.mediaDevices.getUserMedia({video:callType==='video',audio:true});
+    const s=await navigator.mediaDevices.getUserMedia({
+      audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},
+      video:callType==='video'?{facingMode:'user',width:{ideal:640},height:{ideal:480}}:false
+    });
     locStream=s;$('localv').srcObject=s;
     if(callType==='video')$('localv').style.display='block';
     curCall.answer(s);
@@ -1449,6 +1522,13 @@ function snakeKey(e){
 /* ═══════════════════════
    MISC
 ═══════════════════════ */
+function resetDevice(){
+  localStorage.removeItem('yl_device');
+  hideM('sett-ov');
+  document.getElementById('dev-ov').classList.remove('hidden');
+  document.body.classList.remove('mobile','desktop');
+}
+
 function exportData(){
   const b=new Blob([JSON.stringify({user:CU,contacts,messages:chatMsgs},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='youliniri_backup.json';a.click();toast('📤 Dati esportati');
@@ -1458,6 +1538,41 @@ function resetApp(){
   if(!confirm('ATTENZIONE: Tutti i dati verranno eliminati!'))return;
   localStorage.clear();document.cookie.split(';').forEach(c=>{const n=c.split('=')[0].trim();if(n)delCk(n)});location.reload();
 }
+
+
+/* ══ DEVICE PICKER ══ */
+function chooseDevice(type){
+  localStorage.setItem('yl_device', type);
+  applyDevice(type);
+  document.getElementById('dev-ov').classList.add('hidden');
+  initPrivacy();
+}
+
+function applyDevice(type){
+  const isMobile = type === 'mobile';
+  document.body.classList.remove('mobile','desktop','tablet');
+  document.body.classList.add(isMobile ? 'mobile' : 'desktop');
+  // Viewport: su mobile blocca zoom, su desktop lascia libero
+  const vp = document.querySelector('meta[name=viewport]');
+  if(isMobile){
+    vp.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+  } else {
+    vp.content = 'width=device-width, initial-scale=1.0';
+  }
+}
+
+/* Eseguito subito: applica device salvato senza mostrare il picker */
+(function initDevice(){
+  const saved = localStorage.getItem('yl_device');
+  if(saved){
+    applyDevice(saved);
+    document.getElementById('dev-ov').classList.add('hidden');
+    // initPrivacy() viene chiamato normalmente dal blocco START
+  } else {
+    // Mostra il picker — blocca initPrivacy finché non sceglie
+    document.getElementById('dev-ov').classList.remove('hidden');
+  }
+})();
 
 /* START */
 initPrivacy();
